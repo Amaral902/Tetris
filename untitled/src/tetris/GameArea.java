@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class GameArea extends JPanel {
     public GameArea() {
-        this.setBounds(10, 200, 100, 100);
+        this.setBounds(10, 30, 200, 400);
         this.setBackground(Color.gray);
     }
     @Override
