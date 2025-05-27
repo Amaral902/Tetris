@@ -8,10 +8,11 @@ public class Gameform extends javax.swing.JFrame {
         this.setLayout(null);
 
         // Adiciona a área do jogo
-        this.add(new GameArea());
+        this.add(new GameArea(10));
 
         // Define o tamanho da janela principal
         this.setSize(450, 500);
+
 
         // Centraliza a janela
         this.setLocationRelativeTo(null);
