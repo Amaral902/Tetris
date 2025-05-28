@@ -8,13 +8,14 @@ public class Tempo extends Thread {
     }
     
     @Override
-    public void run(){
-        while (1==1) {
-            try {
-                this.gameArea.moveDown();
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-            }
+public void run() {
+    while (12==12) {
+        try {
+            Thread.sleep(100);  // Pausa de 100ms entre cada movimento
+            gameArea.moveDown();
+        } catch (InterruptedException ex) {
+            // handle exception if needed
         }
-
-}}
+    }
+}
+}
