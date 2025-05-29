@@ -11,7 +11,7 @@ public class Tempo extends Thread {
 public void run() {
     while (12==12) {
         try {
-            Thread.sleep(100);  // Pausa de 100ms entre cada movimento
+            Thread.sleep(500);  // Pausa de 100ms entre cada movimento
             gameArea.moveDown();
         } catch (InterruptedException ex) {
             // handle exception if needed

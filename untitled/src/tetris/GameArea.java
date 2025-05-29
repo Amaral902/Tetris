@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class GameArea extends JPanel {
     // Variáveis para controle do grid do jogo
-    private int GridTamanho;      // Número de linhas no grid
+    private int GridLinha;      // Número de linhas no grid
     private int GridColunas;      // Número de colunas no grid
     private int GridCelula;       // Tamanho de cada célula do grid em pixels
     private Blocos bloco;         // Bloco atual em movimento
@@ -21,10 +21,10 @@ public class GameArea extends JPanel {
         // Inicializa variáveis do grid
         GridColunas = colunas;
         GridCelula = this.getBounds().width / GridColunas;  // Calcula tamanho da célula
-        GridTamanho = this.getBounds().height / GridColunas; // Calcula número de linhas
+        GridLinha = this.getBounds().height / GridColunas; // Calcula número de linhas
 
         // Inicializa matriz de fundo
-        backgorund = new Color[GridTamanho][GridColunas];
+        backgorund = new Color[GridLinha][GridColunas];
         spawnbloco(); // Cria o primeiro bloco
     }
 
@@ -32,9 +32,10 @@ public class GameArea extends JPanel {
     public void spawnbloco() {
         // Cria um bloco em forma de L (exemplo fixo)
         bloco = new Blocos(new int[][]{
-                {1, 0, 0},
-                {1, 0, 0},
-                {1, 1, 0}
+                {1, 0},
+                {1, 0},
+                {1, 1},
+
         }, Color.green, GridCelula);
     }
 
@@ -50,21 +51,25 @@ public class GameArea extends JPanel {
 
     // Move o bloco para baixo se possível
     public boolean moveDown() {
-        if (olhabaixo() == false) {
+        if (!olhabaixo()) {
             moverparabackground(); // Fixa o bloco no fundo
             spawnbloco();         // Cria um novo bloco
             return true;          // Continua o jogo
         }
         
-        bloco.baixo();           // Move o bloco atual para baixo
+        bloco.baixo();// Move o bloco atual para baixo
+        limpalinhas();
         repaint();               // Redesenha o painel
         return true;
     }
     public void moveLeft() {
+        if (!olhadesquerda()) return;
+
         bloco.esquerda();
         repaint();
     }
     public void moveRight() {
+        if (!olhadireita()) return;
         bloco.direita();
         repaint();
     }
@@ -78,7 +83,6 @@ public class GameArea extends JPanel {
         }
     }
 
-    // Verifica se o bloco pode mover para baixo
     public boolean olhabaixo() {
         // Verifica se atingiu o fundo da tela
         if (bloco.pegay() + (bloco.altura() * GridCelula) >= getBounds().height) {
@@ -93,17 +97,93 @@ public class GameArea extends JPanel {
         if (gridY < 0) {
             return true;
         }
-        
-        // Verifica colisão com outros blocos
-        for (int linha = 0; linha < bloco.altura(); linha++) {
-            for (int coluna = 0; coluna < bloco.largura(); coluna++) {
+
+        for (int coluna = 0; coluna < bloco.largura(); coluna++) {
+            for (int linha = bloco.altura() - 1; linha >= 0; linha--) {
                 if (forma[linha][coluna] == 1) {
                     int nextY = gridY + linha + 1;
-                    if (nextY >= 0 && nextY < GridTamanho && 
-                        gridX + coluna >= 0 && gridX + coluna < GridColunas &&
-                        backgorund[nextY][gridX + coluna] != null) {
+                    int nextX = gridX + coluna;
+                    
+                    // Verifica se a próxima posição está dentro dos limites
+                    if (nextY >= GridLinha) {
                         return false;
                     }
+                    
+                    if (nextX >= 0 && nextX < GridColunas && nextY >= 0) {
+                        if (backgorund[nextY][nextX] != null) {
+                            return false;
+                        }
+                    }
+                    break; // Só precisamos verificar o bloco mais baixo em cada coluna
+                }
+            }
+        }
+        return true;
+    }
+    public boolean olhadireita() {
+        // Verifica se o bloco atingiu o limite direito da tela
+        if (bloco.pegadireita() + (bloco.largura() * GridCelula) >= getBounds().width) {
+            return false;
+        }
+
+        int[][] forma = bloco.pegaforma();
+        int gridX = bloco.pegax() / GridCelula;
+        int gridY = bloco.pegay() / GridCelula;
+
+        // Verifica cada coluna do bloco, da direita para a esquerda
+        for (int coluna = bloco.largura() - 1; coluna >= 0; coluna--) {
+            for (int linha = 0; linha < bloco.altura(); linha++) {
+                if (forma[linha][coluna] == 1) {
+                    int nextY = gridY + linha;
+                    int nextX = gridX + coluna + 1;
+
+                    // Verifica se está dentro dos limites horizontais
+                    if (nextX >= GridColunas) {
+                        return false;
+                    }
+
+                    // Verifica se há colisão com blocos existentes
+                    if (nextY >= 0 && nextY < GridLinha && nextX >= 0 && nextX < GridColunas) {
+                        if (backgorund[nextY][nextX] != null) {
+                            return false;
+                        }
+                    }
+                    break; // Passa para próxima coluna após encontrar o primeiro bloco
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean olhadesquerda() {
+        // Verifica se o bloco atingiu o limite esquerdo da tela
+        if (bloco.pegaesquerda() <= 0) {
+            return false;
+        }
+
+        int[][] forma = bloco.pegaforma();
+        int gridX = bloco.pegax() / GridCelula;
+        int gridY = bloco.pegay() / GridCelula;
+
+        // Verifica cada coluna do bloco, da esquerda para a direita
+        for (int coluna = 0; coluna < bloco.largura(); coluna++) {
+            for (int linha = 0; linha < bloco.altura(); linha++) {
+                if (forma[linha][coluna] == 1) {
+                    int nextY = gridY + linha;
+                    int nextX = gridX + coluna - 1;
+
+                    // Verifica se está dentro dos limites horizontais
+                    if (nextX < 0) {
+                        return false;
+                    }
+
+                    // Verifica se há colisão com blocos existentes
+                    if (nextY >= 0 && nextY < GridLinha && nextX >= 0 && nextX < GridColunas) {
+                        if (backgorund[nextY][nextX] != null) {
+                            return false;
+                        }
+                    }
+                    break; // Passa para próxima coluna após encontrar o primeiro bloco
                 }
             }
         }
@@ -128,7 +208,7 @@ public class GameArea extends JPanel {
     // Desenha os blocos fixos do fundo
     private void setBackground(Graphics g) {
         Color cor;
-        for (int linha = 0; linha < GridTamanho; linha++) {
+        for (int linha = 0; linha < GridLinha; linha++) {
             for (int coluna = 0; coluna < GridColunas; coluna++) {
                 cor = backgorund[linha][coluna];
                 if (cor != null) {
@@ -139,6 +219,48 @@ public class GameArea extends JPanel {
                     gridQuadrado(g, x, y, cor);
                 }
             }
+        }
+    }
+    public void limpalinhas() {
+        boolean linhafeita;
+        boolean algumaLinhaCompleta = false;
+        
+        for (int linha = GridLinha - 1; linha >= 0; linha--) {
+            linhafeita = true;
+            for (int coluna = 0; coluna < GridColunas; coluna++) {
+                if (backgorund[linha][coluna] == null) {
+                    linhafeita = false;
+                    break;
+                }
+            }
+
+            if (linhafeita) {
+                limpar(linha);
+                cair(linha);
+                algumaLinhaCompleta = true;
+                linha++; // Verifica a mesma linha novamente, já que os blocos caíram
+            }
+        }
+        
+        if (algumaLinhaCompleta) {
+            repaint();
+        }
+    }
+    private void limpar(int linha){
+        for (int coluna = 0; coluna < GridColunas; coluna++)
+        {
+            backgorund[linha][coluna] = null;
+        }
+    }
+    private void cair(int linhaCompleta) {
+        for (int linha = linhaCompleta; linha > 0; linha--) {
+            for (int coluna = 0; coluna < GridColunas; coluna++) {
+                backgorund[linha][coluna] = backgorund[linha - 1][coluna];
+            }
+        }
+        // Limpa a linha do topo
+        for (int coluna = 0; coluna < GridColunas; coluna++) {
+            backgorund[0][coluna] = null;
         }
     }
 
@@ -163,7 +285,7 @@ public class GameArea extends JPanel {
             for (int coluna = 0; coluna < largura; coluna++) {
                 if (forma[linha][coluna] == 1) {
                     // Verifica se a posição está dentro dos limites da matriz
-                    if (gridY + linha >= 0 && gridY + linha < GridTamanho &&
+                    if (gridY + linha >= 0 && gridY + linha < GridLinha &&
                         gridX + coluna >= 0 && gridX + coluna < GridColunas) {
                         backgorund[gridY + linha][gridX + coluna] = cor;
                     }

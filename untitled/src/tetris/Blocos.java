@@ -91,6 +91,7 @@ public class Blocos {
         return y;
     }
 
+
     // Define uma nova posição X
     public void setX(int newX) {
         x = newX;
@@ -114,5 +115,11 @@ public class Blocos {
     // Retorna a altura do bloco (número de linhas na matriz forma)
     public int altura() {
         return forma.length;
+    }
+    public int pegadireita(){
+        return x;
+    }
+    public int pegaesquerda(){
+    return x;
     }
 }
