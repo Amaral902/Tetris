@@ -4,28 +4,31 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameArea extends JPanel {
+    // Flag para controlar o estado do jogo
+    private boolean isGameOver = false;
+    
     // Variáveis para controle do grid do jogo
-    private int GridLinha;      // Número de linhas no grid
+    private int GridLinha;        // Número de linhas no grid
     private int GridColunas;      // Número de colunas no grid
     private int GridCelula;       // Tamanho de cada célula do grid em pixels
     private Blocos bloco;         // Bloco atual em movimento
     private Color[][] backgorund; // Matriz que guarda os blocos fixos no fundo
     private static final int GRID_HEIGHT = 20; // Altura padrão do grid em células
 
-    // Construtor da área do jogo
+    // Construtor: inicializa a área do jogo com número específico de colunas
     public GameArea(int colunas) {
-        // Define posição e tamanho do painel
+        // Configuração visual do painel
         this.setBounds(10, 30, 200, 400);
         this.setBackground(Color.gray);
         
-        // Inicializa variáveis do grid
+        // Inicialização do grid
         GridColunas = colunas;
-        GridCelula = this.getBounds().width / GridColunas;  // Calcula tamanho da célula
-        GridLinha = this.getBounds().height / GridColunas; // Calcula número de linhas
+        GridCelula = this.getBounds().width / GridColunas;
+        GridLinha = this.getBounds().height / GridColunas;
 
-        // Inicializa matriz de fundo
+        // Inicializa matriz de fundo e cria primeiro bloco
         backgorund = new Color[GridLinha][GridColunas];
-        spawnbloco(); // Cria o primeiro bloco
+        spawnbloco();
     }
 
     // Cria um novo bloco no jogo
@@ -39,7 +42,7 @@ public class GameArea extends JPanel {
         }, Color.green, GridCelula);
     }
 
-    // Retorna a largura do painel em pixels
+    // Retorna a largura do painel em pixels 
     public int getPixelWidth() {
         return this.getBounds().width;
     }
@@ -50,34 +53,47 @@ public class GameArea extends JPanel {
     }
 
     // Move o bloco para baixo se possível
+    
     public boolean moveDown() {
         if (!olhabaixo()) {
-            moverparabackground(); // Fixa o bloco no fundo
-            spawnbloco();         // Cria um novo bloco
-            return true;          // Continua o jogo
+            moverparabackground();
+            spawnbloco();
+        
+        if (gameover()) {
+            isGameOver = true;  // Set game over state
+            return false;
         }
         
-        bloco.baixo();// Move o bloco atual para baixo
         limpalinhas();
-        repaint();               // Redesenha o painel
         return true;
     }
+    
+    bloco.baixo();
+    limpalinhas();
+    repaint();
+    return true;
+}
+    // Métodos de movimento (todos verificam se o jogo acabou antes de executar)
     public void moveLeft() {
-        if (!olhadesquerda()) return;
-
+        if (isGameOver || !olhadesquerda()) return;
         bloco.esquerda();
         repaint();
     }
+
     public void moveRight() {
-        if (!olhadireita()) return;
+        if (isGameOver || !olhadireita()) return;
         bloco.direita();
         repaint();
     }
+
     public void rotate() {
+        if (isGameOver) return;
         bloco.rotacionar();
         repaint();
     }
+
     public void drop() {
+        if (isGameOver) return;
         while (olhabaixo()) {
             moveDown();
         }
@@ -294,6 +310,16 @@ public class GameArea extends JPanel {
         }
     }
 
+    // Verifica se o jogo acabou (blocos chegaram ao topo)
+    public boolean gameover() {
+        // Verifica se há blocos na área de spawn (primeiras linhas)
+        for (int coluna = 0; coluna < GridColunas; coluna++) {
+            if (backgorund[0][coluna] != null || backgorund[1][coluna] != null) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     // Metodo chamado automaticamente para desenhar o componente
@@ -302,5 +328,9 @@ public class GameArea extends JPanel {
         super.paintComponent(g);
         criarbloco(g);     // Desenha o bloco atual
         setBackground(g);  // Desenha os blocos do fundo
+    }
+    // Getter para o estado do jogo
+    public boolean isGameOver() {
+        return isGameOver;
     }
 }
