@@ -1,6 +1,6 @@
 package tetris;
-
 import java.awt.Color;
+import java.util.Random;
 
 public class Blocos {
     private int[][] forma;
@@ -14,6 +14,7 @@ public class Blocos {
     // Construtor que inicializa um novo bloco
     public Blocos(int[][] forma, Color cor, int TamanhoBloco) {
         this.cor = cor;
+        Random r = new Random();
         this.TamanhoBloco = TamanhoBloco;
         
         // Primeiro inicializa as formas
@@ -26,6 +27,9 @@ public class Blocos {
         // Inicializa o bloco no topo da tela
         x = 3 * TamanhoBloco;  // Posição inicial X (3 células da esquerda)
         y = -4 * TamanhoBloco; // Posição inicial Y (4 células acima da área visível)
+    }
+
+    public Blocos() {
     }
 
     private void initShapes(int[][] formaInicial) {
@@ -122,4 +126,32 @@ public class Blocos {
     public int pegaesquerda(){
     return x;
     }
+
+    public int getFormaAtual() {
+        return formaatual;
+    }
+
+public void setFormaAtual(int forma) {
+    formaatual = forma;
+    this.forma = formas[formaatual];
+}
+public int pegaBordaEsquerda() {
+    return x / TamanhoBloco;
+}
+
+public int pegaBordaDireita() {
+    return (x + (largura() * TamanhoBloco)) / TamanhoBloco;
+}
+
+public int pegaBordaInferior() {
+    return (y + (altura() * TamanhoBloco)) / TamanhoBloco;
+}
+
+public void setGridX(int gridX) {
+    this.x = gridX * TamanhoBloco;
+}
+
+public void setGridY(int gridY) {
+    this.y = gridY * TamanhoBloco;
+}
 }

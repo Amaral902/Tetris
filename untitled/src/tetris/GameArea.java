@@ -1,5 +1,6 @@
 package tetris;
-
+import java.util.Random;
+import tetris.tetronimos.*;
 import javax.swing.*;
 import java.awt.*;
 
@@ -19,7 +20,7 @@ public class GameArea extends JPanel {
     private Blocos bloco;         // Bloco atual em movimento
     private Color[][] backgorund; // Matriz que guarda os blocos fixos no fundo
     private static final int GRID_HEIGHT = 20; // Altura padrão do grid em células
-
+    private Blocos[] blocos;
     // Construtor: inicializa a área do jogo com número específico de colunas
     public GameArea(int colunas) {
         // Configuração visual do painel
@@ -33,8 +34,18 @@ public class GameArea extends JPanel {
 
         // Inicializa matriz de fundo e cria primeiro bloco
         backgorund = new Color[GridLinha][GridColunas];
+        blocos = new Blocos[]{
+                new I(GridCelula),
+                new J(GridCelula),
+                new T(GridCelula),
+                new L(GridCelula),
+                new cubo(GridCelula),
+                new S(GridCelula),
+                new Z(GridCelula)
+        };
         spawnbloco();
     }
+
 
     // Adicione estes métodos getter
     public int getScore() {
@@ -47,14 +58,27 @@ public class GameArea extends JPanel {
 
     // Cria um novo bloco no jogo
     public void spawnbloco() {
-        // Cria um bloco em forma de L (exemplo fixo)
-        bloco = new Blocos(new int[][]{
-                {1, 0},
-                {1, 0},
-                {1, 1},
+        Random random = new Random();
+        int indice = random.nextInt(blocos.length);
 
-        }, Color.green, GridCelula);
+        // Cria uma nova instância baseada no tipo do bloco selecionado
+        if (blocos[indice] instanceof I) {
+            bloco = new I(GridCelula);
+        } else if (blocos[indice] instanceof J) {
+            bloco = new J(GridCelula);
+        } else if (blocos[indice] instanceof T) {
+            bloco = new T(GridCelula);
+        } else if (blocos[indice] instanceof L) {
+            bloco = new L(GridCelula);
+        } else if (blocos[indice] instanceof cubo) {
+            bloco = new cubo(GridCelula);
+        } else if (blocos[indice] instanceof S) {
+            bloco = new S(GridCelula);
+        } else if (blocos[indice] instanceof Z) {
+            bloco = new Z(GridCelula);
+        }
     }
+
 
     // Retorna a largura do painel em pixels 
     public int getPixelWidth() {
@@ -110,11 +134,61 @@ public class GameArea extends JPanel {
         repaint();
     }
 
-    public void rotate() {
-        if (isGameOver) return;
-        bloco.rotacionar();
-        repaint();
+    
+public void rotate() {
+    if (isGameOver) return;
+    
+    // Salva a forma atual antes de rotacionar
+    int formaAtual = bloco.getFormaAtual();
+    
+    // Tenta rotacionar
+    bloco.rotacionar();
+    
+    // Ajusta a posição se necessário
+    if (bloco.pegaBordaEsquerda() < 0) {
+        bloco.setGridX(0);
     }
+    
+    if (bloco.pegaBordaDireita() >= GridColunas) {
+        bloco.setGridX(GridColunas - bloco.largura());
+    }
+    
+    if (bloco.pegaBordaInferior() >= GridLinha) {
+        bloco.setGridY(GridLinha - bloco.altura());
+    }
+    
+    // Verifica se há colisão com outros blocos após o ajuste
+    if (temColisao()) {
+        // Se ainda houver colisão, desfaz a rotação
+        bloco.setFormaAtual(formaAtual);
+        return;
+    }
+    
+    repaint();
+}
+
+// Metodo auxiliar para verificar colisões
+private boolean temColisao() {
+    int[][] forma = bloco.pegaforma();
+    int gridX = bloco.pegax() / GridCelula;
+    int gridY = bloco.pegay() / GridCelula;
+    
+    for (int linha = 0; linha < bloco.altura(); linha++) {
+        for (int coluna = 0; coluna < bloco.largura(); coluna++) {
+            if (forma[linha][coluna] == 1) {
+                int nextY = gridY + linha;
+                int nextX = gridX + coluna;
+                
+                if (nextY >= 0 && nextY < GridLinha && nextX >= 0 && nextX < GridColunas) {
+                    if (backgorund[nextY][nextX] != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
 
     public void drop() {
         if (isGameOver) return;
@@ -393,4 +467,47 @@ public void setGameform(Gameform gameform) {
     public boolean isGameOver() {
         return isGameOver;
     }
+    private boolean podeRotacionar() {
+        // Salva a forma atual
+        int formaAtual = bloco.getFormaAtual();
+        int[][] formaOriginal = bloco.pegaforma();
+    
+        // Testa a rotação
+        bloco.rotacionar();
+    
+     // Verifica colisões
+        int gridX = bloco.pegax() / GridCelula;
+        int gridY = bloco.pegay() / GridCelula;
+    
+        // Verifica limites da tela
+        if (bloco.pegax() + (bloco.largura() * GridCelula) > getBounds().width ||
+        bloco.pegax() < 0 ||
+        bloco.pegay() + (bloco.altura() * GridCelula) > getBounds().height) {
+        // Restaura a forma original
+        bloco.setFormaAtual(formaAtual);
+        return false;
+     }
+    
+    // Verifica colisão com outros blocos
+        for (int linha = 0; linha < bloco.altura(); linha++) {
+            for (int coluna = 0; coluna < bloco.largura(); coluna++) {
+                if (bloco.pegaforma()[linha][coluna] == 1) {
+                    int nextY = gridY + linha;
+                    int nextX = gridX + coluna;
+
+                    if (nextY >= 0 && nextX >= 0 && nextY < GridLinha && nextX < GridColunas) {
+                        if (backgorund[nextY][nextX] != null) {
+                            // Restaura a forma original
+                            bloco.setFormaAtual(formaAtual);
+                            return false;
+                        }
+                    }
+             }
+         }
+        }
+    
+        // Restaura a forma original
+        bloco.setFormaAtual(formaAtual);
+        return true;
+}
 }

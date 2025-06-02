@@ -3,8 +3,8 @@ package tetris;
 public class Tempo extends Thread {
     private GameArea ga;
     private Gameform gf;
-    private int velocidade = 1000;
-    private int velocidadeBase = 1000;
+    private int velocidade = 700;
+    private int velocidadeBase = 700;
     private boolean running = true;
 
     public Tempo(GameArea ga, Gameform gf) {
