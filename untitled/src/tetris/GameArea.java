@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameArea extends JPanel {
+    private int score = 0;
+    private int level = 1;
+    private int linhasCompletasTotal = 0;
+    private Gameform gameform;  // Referência ao Gameform
+    
     // Flag para controlar o estado do jogo
     private boolean isGameOver = false;
     
@@ -31,6 +36,15 @@ public class GameArea extends JPanel {
         spawnbloco();
     }
 
+    // Adicione estes métodos getter
+    public int getScore() {
+        return score;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
     // Cria um novo bloco no jogo
     public void spawnbloco() {
         // Cria um bloco em forma de L (exemplo fixo)
@@ -55,15 +69,25 @@ public class GameArea extends JPanel {
     // Move o bloco para baixo se possível
     
     public boolean moveDown() {
-        if (!olhabaixo()) {
-            moverparabackground();
-            spawnbloco();
+    if (!olhabaixo()) {
+        moverparabackground();
         
         if (gameover()) {
-            isGameOver = true;  // Set game over state
+            isGameOver = true;
+            if (gameform != null) {
+                // Em vez de chamar gameOver, vamos mostrar uma mensagem simples
+                JOptionPane.showMessageDialog(gameform, 
+                    "Game Over!\nPontuação Final: " + score, 
+                    "Fim de Jogo", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                // Fecha a janela atual e abre o menu principal
+                gameform.dispose();
+                new Principal().setVisible(true);
+            }
             return false;
         }
         
+        spawnbloco();
         limpalinhas();
         return true;
     }
@@ -237,9 +261,11 @@ public class GameArea extends JPanel {
             }
         }
     }
+    // Modifique o metodo limpalinhas para retornar void
     public void limpalinhas() {
         boolean linhafeita;
         boolean algumaLinhaCompleta = false;
+        int linhasCompletas = 0;
         
         for (int linha = GridLinha - 1; linha >= 0; linha--) {
             linhafeita = true;
@@ -251,10 +277,40 @@ public class GameArea extends JPanel {
             }
 
             if (linhafeita) {
+                linhasCompletas++;
                 limpar(linha);
                 cair(linha);
                 algumaLinhaCompleta = true;
-                linha++; // Verifica a mesma linha novamente, já que os blocos caíram
+                linha++;
+            }
+        }
+        
+        if (linhasCompletas > 0) {
+            linhasCompletasTotal += linhasCompletas;
+            
+            // Atualiza a pontuação
+            switch (linhasCompletas) {
+                case 1:
+                    score += 100 * level;
+                    break;
+                case 2:
+                    score += 300 * level;
+                    break;
+                case 3:
+                    score += 500 * level;
+                    break;
+                case 4:
+                    score += 800 * level;
+                    break;
+            }
+            
+            // Atualiza o nível (a cada 3 linhas)
+            level = (linhasCompletasTotal / 3) + 1;
+            
+            // Notifica o Gameform sobre as mudanças
+            if (gameform != null) {
+                gameform.updateScore(score);
+                gameform.updateLevel(level);
             }
         }
         
@@ -262,6 +318,10 @@ public class GameArea extends JPanel {
             repaint();
         }
     }
+// Adicione um metodo para definir o Gameform
+public void setGameform(Gameform gameform) {
+    this.gameform = gameform;
+}
     private void limpar(int linha){
         for (int coluna = 0; coluna < GridColunas; coluna++)
         {
