@@ -23,13 +23,13 @@ import java.awt.event.ActionEvent;
             scoreLabel = new JLabel("Score: 0");
             scoreLabel.setBounds(300, 30, 100, 30);
             scoreLabel.setForeground(Color.BLACK);
-            scoreLabel.setFont(new Font("Arial", Font.BOLD, 17));
+            scoreLabel.setFont(new Font("Arial", Font.BOLD, 15));
             this.add(scoreLabel);
 
             levelLabel = new JLabel("level: 1");
             levelLabel.setBounds(300, 50, 100, 30);
             levelLabel.setForeground(Color.BLACK);
-            levelLabel.setFont(new Font("Arial", Font.BOLD, 17));
+            levelLabel.setFont(new Font("Arial", Font.BOLD, 15));
             this.add(levelLabel);
 
             // Adicionar painel de controles

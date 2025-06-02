@@ -131,27 +131,27 @@ public class Blocos {
         return formaatual;
     }
 
-public void setFormaAtual(int forma) {
-    formaatual = forma;
-    this.forma = formas[formaatual];
-}
-public int pegaBordaEsquerda() {
-    return x / TamanhoBloco;
-}
+    public void setFormaAtual(int forma) {
+      formaatual = forma;
+       this.forma = formas[formaatual];
+    }
+    public int pegaBordaEsquerda() {
+        return x / TamanhoBloco;
+    }
 
-public int pegaBordaDireita() {
-    return (x + (largura() * TamanhoBloco)) / TamanhoBloco;
-}
+    public int pegaBordaDireita() {
+      return (x + (largura() * TamanhoBloco)) / TamanhoBloco;
+    }
 
-public int pegaBordaInferior() {
-    return (y + (altura() * TamanhoBloco)) / TamanhoBloco;
-}
+    public int pegaBordaInferior() {
+     return (y + (altura() * TamanhoBloco)) / TamanhoBloco;
+    }
 
-public void setGridX(int gridX) {
-    this.x = gridX * TamanhoBloco;
-}
+    public void setGridX(int gridX) {
+      this.x = gridX * TamanhoBloco;
+    }
 
-public void setGridY(int gridY) {
-    this.y = gridY * TamanhoBloco;
-}
+    public void setGridY(int gridY) {
+     this.y = gridY * TamanhoBloco;
+    }
 }
