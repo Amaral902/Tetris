@@ -51,7 +51,7 @@ public class Principal extends JFrame {
         dispose();
     }
 
-    // Método principal que inicia o programa
+    // Metodo principal que inicia o programa
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             Principal menu = new Principal();

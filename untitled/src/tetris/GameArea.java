@@ -24,7 +24,6 @@ public class GameArea extends JPanel {
     private int GridCelula;              // Tamanho de cada célula em pixels
     private Blocos bloco;                // Peça atual em movimento
     private Color[][] backgorund;        // Matriz das peças fixadas
-    private static final int GRID_HEIGHT = 20; // Altura padrão
 
     // Array com todos os tipos de peças
     private Blocos[] blocos = new Blocos[]{
@@ -50,9 +49,7 @@ public class GameArea extends JPanel {
     }
 
     // ====================== GETTERS ======================
-    public int getScore() { return score; }
     public int getLevel() { return level; }
-    public boolean isGameOver() { return isGameOver; }
 
     // ================== GERENCIAMENTO DE PEÇAS ==================
 
@@ -187,9 +184,7 @@ public class GameArea extends JPanel {
                     int nextY = gridY + linha + 1;
                     int nextX = gridX + coluna;
 
-                    if (nextY >= GridLinha ||
-                            (nextX >= 0 && nextX < GridColunas &&
-                                    nextY >= 0 && backgorund[nextY][nextX] != null)) {
+                    if (nextY >= GridLinha || (nextX >= 0 && nextX < GridColunas && nextY >= 0 && backgorund[nextY][nextX] != null)) {
                         return false;
                     }
                     break;
@@ -280,10 +275,7 @@ public class GameArea extends JPanel {
          */
         for (int linha = 0; linha < bloco.altura(); linha++) {
             for (int coluna = 0; coluna < bloco.largura(); coluna++) {
-                if (forma[linha][coluna] == 1 &&
-                        gridY + linha >= 0 && gridX + coluna >= 0 &&
-                        gridY + linha < GridLinha && gridX + coluna < GridColunas) {
-                    backgorund[gridY + linha][gridX + coluna] = cor;
+                if (forma[linha][coluna] == 1 && gridY + linha >= 0 && gridX + coluna >= 0 && gridY + linha < GridLinha && gridX + coluna < GridColunas) {backgorund[gridY + linha][gridX + coluna] = cor;
                 }
             }
         }
@@ -308,7 +300,6 @@ public class GameArea extends JPanel {
      * Remove linhas completas e atualiza pontuação
      */
     public void limpalinhas() {
-        boolean algumaLinhaCompleta = false;
         int linhasCompletas = 0;
 
         /* Loop principal - percorre de BAIXO PARA CIMA */
@@ -344,7 +335,6 @@ public class GameArea extends JPanel {
                 }
 
                 linha++; // Reavalia a mesma posição
-                algumaLinhaCompleta = true;
             }
         }
 

@@ -29,9 +29,6 @@ public class Blocos {
         y = -4 * TamanhoBloco; // Posição inicial Y (4 células acima da área visível)
     }
 
-    public Blocos() {
-    }
-
     private void initShapes(int[][] formaInicial) {
     // Inicializa array com 4 rotações possíveis
     formas = new int[4][][];  // Array para 4 rotações diferentes
@@ -93,17 +90,6 @@ public class Blocos {
     // Retorna a posição Y atual do bloco
     public int pegay() {
         return y;
-    }
-
-
-    // Define uma nova posição X
-    public void setX(int newX) {
-        x = newX;
-    }
-
-    // Define uma nova posição Y
-    public void setY(int newY) {
-        y = newY;
     }
 
     // Retorna a cor do bloco

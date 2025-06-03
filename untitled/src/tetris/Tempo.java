@@ -43,7 +43,7 @@ public class Tempo extends Thread {
         }
     }
 
-    // Método para parar o jogo
+    // Metodo para parar o jogo
     public void stopGame() {
         running = false;
     }

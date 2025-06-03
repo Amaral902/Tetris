@@ -114,16 +114,6 @@ import java.awt.event.ActionEvent;
         levelLabel.setText("Level: " + level);
     }
 
-
-    @SuppressWarnings("unchecked")
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Gameform().setVisible(true);
-            }
-        });
-    }
-
     private void initComponents() {
     }
 }
